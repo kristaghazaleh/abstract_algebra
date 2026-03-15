@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Abstract algebra reference: equivalence relations, groups, subgroups, cyclic groups, permutations, cosets, Lagrange theorem, direct products, homomorphisms, isomorphisms, normal subgroups, quotient groups, and proof patterns." />
+  <meta name="keywords" content="abstract algebra, groups, subgroups, cyclic groups, permutations, cosets, Lagrange theorem, homomorphisms, isomorphisms, quotient groups, normal subgroups, dihedral groups, alternating groups" />
+  <title>Math 113 — Abstract Algebra Reference</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['\\[', '\\]']]
+    }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="course-line">Math 113</div>
+      <h1 class="title">Abstract Algebra Reference</h1>
+      <div class="byline">by Ellie Ghazaleh</div>
+      <div class="meta">
+        <div><span class="meta-label">Term:</span> Spring 2026</div>
+        <div><span class="meta-label">Topic:</span> Proof-based group theory reference</div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-inner">
+      <div class="toc-title">Contents</div>
+      <a href="#overview">Overview</a>
+      <a href="#logic">Sets & Relations</a>
+      <a href="#groups">Groups</a>
+      <a href="#subgroups">Subgroups, Cyclic, Orders</a>
+      <a href="#permutations">Permutations & Dihedral</a>
+      <a href="#cosets">Cosets & Lagrange</a>
+      <a href="#products">Products & Abelian Groups</a>
+      <a href="#homs">Homomorphisms & Isomorphisms</a>
+      <a href="#quotients">Normal & Quotients</a>
+      <a href="#patterns">Proof Patterns</a>
+      <a href="#pitfalls">Common Mistakes</a>
+    </div>
+  </nav>
+
+  <main class="page">
+
+    <section id="overview" class="content">
+      <h2>Overview</h2>
+      <p class="placeholder">
+        This page is meant to work as plain study material and a long-term reference. The recurring theme in abstract algebra is that most problems are not solved by brute force computation. They are solved by knowing exactly which definition applies, which standard theorem is relevant, and what must be proved in what order. A lot of the work is pattern recognition: equivalence relation questions ask for three properties, subgroup questions ask for a closure-plus-inverse test, homomorphism questions ask for the operation-preserving law, and quotient questions ask whether normality and well-definedness have been handled correctly.
+      </p>
+
+      <h3>What to think first</h3>
+      <ul class="bullets">
+        <li><span class="label">Relation problem:</span> check reflexive, symmetric, transitive, then identify the classes.</li>
+        <li><span class="label">Operation problem:</span> ask whether the operation is actually binary, then closure, associativity, identity, inverses.</li>
+        <li><span class="label">Subset problem:</span> ask whether this is a subgroup and use a subgroup test instead of redoing all axioms.</li>
+        <li><span class="label">Order problem:</span> think powers, divisibility, Lagrange, and least positive exponent.</li>
+        <li><span class="label">Permutation problem:</span> rewrite in disjoint cycles and compose right to left.</li>
+        <li><span class="label">Map problem:</span> compute \(\varphi(xy)\) and \(\varphi(x)\varphi(y)\) directly.</li>
+        <li><span class="label">Quotient problem:</span> ask whether the subgroup is normal and whether the operation on cosets is well defined.</li>
+      </ul>
+
+      <h3>Very short checklist of facts that solve a lot of exercises</h3>
+      <ul class="bullets">
+        <li>Kernels are normal subgroups.</li>
+        <li>Images of homomorphisms are subgroups.</li>
+        <li>Every subgroup of an abelian group is normal.</li>
+        <li>A subgroup of index \(2\) is normal.</li>
+        <li>Every cyclic group is abelian, and every subgroup of a cyclic group is cyclic.</li>
+        <li>The order of an element divides the order of a finite group.</li>
+        <li>A group of prime order is cyclic.</li>
+        <li>Two groups cannot be isomorphic if they differ on abelian/nonabelian behavior, element orders, subgroup counts, or cyclicity.</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="logic" class="content">
+      <h2>Sets, Relations, Equivalence Classes, and Well-Definedness</h2>
+
+      <h3>Equivalence relations</h3>
+      <p class="placeholder">
+        A relation \(\sim\) on a set \(S\) is an equivalence relation if it is reflexive, symmetric, and transitive. These three properties are not optional details; they are exactly what makes it possible to group elements into classes that behave like the same object for the purpose of the problem.
+      </p>
+
+      <ul class="bullets">
+        <li><span class="label">Reflexive:</span> for every \(a\in S\), show \(a\sim a\).</li>
+        <li><span class="label">Symmetric:</span> if \(a\sim b\), show \(b\sim a\).</li>
+        <li><span class="label">Transitive:</span> if \(a\sim b\) and \(b\sim c\), show \(a\sim c\).</li>
+      </ul>
+
+      <h3>Equivalence classes</h3>
+      <p class="placeholder">
+        The equivalence class of \(a\) is \([a]=\{x\in S : x\sim a\}\). Distinct equivalence classes are disjoint, and the equivalence classes partition the set. That means every element belongs to exactly one class. In practice, many algebraic constructions are built from equivalence classes rather than raw elements.
+      </p>
+
+      <h3>Standard examples</h3>
+      <ul class="bullets">
+        <li>Congruence modulo \(n\): \(a\equiv b \pmod n\) iff \(n\mid(a-b)\).</li>
+        <li>Same absolute value on \(\mathbb{R}\): \(x\sim y\) iff \(|x|=|y|\).</li>
+        <li>Rational-number construction from integer pairs: \((a,b)\sim(c,d)\) iff \(ad=bc\).</li>
+      </ul>
+
+      <h3>Common examples to know cold</h3>
+      <ul class="bullets">
+        <li>On \(\mathbb{Z}\), the relation \(a\sim b\iff a\equiv b\pmod 5\) has exactly five classes: \([0],[1],[2],[3],[4]\).</li>
+        <li>On \(\mathbb{R}\), the relation \(x\sim y\iff x-y\in\mathbb{Z}\) packages real numbers by their fractional part. A typical class is \([0.3]=\{\dots,-1.7,-0.7,0.3,1.3,2.3,\dots\}\).</li>
+        <li>For fractions, \((1,2)\sim(2,4)\sim(3,6)\) because they represent the same rational number. This is the standard model for why well-definedness matters.</li>
+      </ul>
+
+      <h3>Well-defined operations</h3>
+      <p class="placeholder">
+        When the elements of the new structure are equivalence classes, you must prove that any operation on those classes does not depend on the representative chosen. This is what well defined means. It is one of the most important proof ideas in the course. For example, on \(\mathbb{Z}_n\), to define multiplication by \([a][b]=[ab]\), you must show that if \(a\equiv a'\pmod n\) and \(b\equiv b'\pmod n\), then \(ab\equiv a'b'\pmod n\). If that fails, then the operation is not legitimate on classes.
+      </p>
+
+      <h3>How to prove well defined</h3>
+      <ul class="bullets">
+        <li>Start by assuming two representatives describe the same class.</li>
+        <li>Translate that assumption into the defining relation.</li>
+        <li>Apply the proposed operation to both representatives.</li>
+        <li>Show the outputs are equivalent under the same relation.</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="groups" class="content">
+      <h2>Groups</h2>
+
+      <h3>Definition</h3>
+      <p class="placeholder">
+        A group is a set \(G\) together with a binary operation \(*\) such that closure, associativity, identity, and inverses all hold. If the operation also satisfies \(ab=ba\) for all \(a,b\in G\), the group is abelian.
+      </p>
+
+      <h3>Binary operation and closure</h3>
+      <p class="placeholder">
+        The first hidden issue in many problems is whether the proposed operation is even binary. The output must stay in the set. A set with an operation that leaves the set is not a group before any deeper axiom is even considered.
+      </p>
+
+      <h3>Basic facts used constantly</h3>
+      <ul class="bullets">
+        <li>The identity element is unique.</li>
+        <li>Each element has a unique inverse.</li>
+        <li>Left and right cancellation hold.</li>
+        <li>\((ab)^{-1}=b^{-1}a^{-1}\).</li>
+        <li>\((a^{-1})^{-1}=a\).</li>
+        <li>If \(a^2=e\) for every \(a\in G\), then \(G\) is abelian.</li>
+        <li>If \(x^2=x\), then \(x=e\).</li>
+      </ul>
+
+      <h3>How to show something is not a group</h3>
+      <ul class="bullets">
+        <li>Find one failure of closure.</li>
+        <li>Give one concrete failure of associativity.</li>
+        <li>Show no identity exists.</li>
+        <li>Show some element has no inverse in the set.</li>
+      </ul>
+
+      <h3>Common examples</h3>
+      <ul class="bullets">
+        <li>\((\mathbb{Z},+)\), \((\mathbb{R},+)\), and \((\mathbb{C}^\times,\cdot)\) are groups.</li>
+        <li>\((\mathbb{Z},\cdot)\) is not a group because most elements have no multiplicative inverse in \(\mathbb{Z}\).</li>
+        <li>Invertible matrices form a group under multiplication, but all matrices do not.</li>
+      </ul>
+
+      <h3>Common examples that show up on tests</h3>
+      <ul class="bullets">
+        <li>\((2\mathbb{Z},+)\) is a group under addition even though it is not all of \(\mathbb{Z}\). The identity is still \(0\), and the inverse of \(2k\) is \(-2k\).</li>
+        <li>\((\mathbb{Z}_n,+)\) is always a finite cyclic group generated by \([1]\).</li>
+        <li>\((U(n),\cdot)\), the units mod \(n\), is a group under multiplication mod \(n\). This is a common place where closure and inverses have to be checked in modular arithmetic.</li>
+        <li>\((\mathbb{R}\setminus\{0\},\cdot)\) is a group, but \((\mathbb{R},\cdot)\) is not because \(0\) has no inverse.</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="subgroups" class="content">
+      <h2>Subgroups, Cyclic Groups, Generators, and Orders</h2>
+
+      <h3>Subgroup tests</h3>
+      <p class="placeholder">
+        A subgroup is a subset that is itself a group under the same operation. In proofs, the most efficient test is usually: show the subset is nonempty and closed under \(ab^{-1}\). In additive notation, that becomes closure under subtraction.
+      </p>
+
+      <ul class="bullets">
+        <li><span class="label">Two-step subgroup test:</span> \(H\neq\varnothing\) and for all \(a,b\in H\), \(ab^{-1}\in H\).</li>
+        <li><span class="label">Finite subgroup test:</span> if \(H\) is a nonempty finite subset closed under the operation, then \(H\le G\).</li>
+        <li><span class="label">Additive version:</span> show \(0\in H\) and \(a-b\in H\) whenever \(a,b\in H\).</li>
+      </ul>
+
+      <h3>Cyclic groups and generators</h3>
+      <p class="placeholder">
+        A group is cyclic if one element generates the whole group. In multiplicative notation, \(\langle a\rangle = \{a^n:n\in\mathbb{Z}\}\). In additive notation, \(\langle a\rangle = \{na:n\in\mathbb{Z}\}\). Cyclic groups are among the easiest groups to analyze because their structure is completely controlled by one generator.
+      </p>
+
+      <ul class="bullets">
+        <li>Every cyclic group is abelian.</li>
+        <li>Every subgroup of a cyclic group is cyclic.</li>
+        <li>If \(|a|=n\), then \(|a^k|=n/\gcd(n,k)\).</li>
+        <li>In \(\mathbb{Z}_n\), the generator \([k]\) exists exactly when \(\gcd(k,n)=1\).</li>
+        <li>A finite cyclic group has exactly one subgroup of order \(d\) for each divisor \(d\) of \(n\).</li>
+      </ul>
+
+      <h3>Order of an element</h3>
+      <p class="placeholder">
+        The order of an element \(a\) is the least positive integer \(n\) such that \(a^n=e\), if such an \(n\) exists. If no such positive integer exists, then \(a\) has infinite order. In additive notation, the order of \(a\) is the least positive \(n\) with \(na=0\).
+      </p>
+
+      <h3>Ways to compute orders</h3>
+      <ul class="bullets">
+        <li>In a cyclic group of order \(n\), use \(|a^k|=n/\gcd(n,k)\).</li>
+        <li>In \(\mathbb{Z}_n\), the order of \([k]\) is \(n/\gcd(n,k)\).</li>
+        <li>For permutations, use disjoint cycles and take the least common multiple of cycle lengths.</li>
+        <li>For product groups, take the least common multiple of component orders.</li>
+      </ul>
+
+      <h3>Useful consequences</h3>
+      <ul class="bullets">
+        <li>If a finite group has no proper nontrivial subgroups, then it is cyclic of prime order.</li>
+        <li>If \(|G|\) is prime, then every nonidentity element generates \(G\).</li>
+        <li>A subgroup generated by an element always has size equal to the order of that element.</li>
+      </ul>
+
+      <h3>Common exam examples</h3>
+      <ul class="bullets">
+        <li>In \(\mathbb{Z}_{12}\), the element \([8]\) has order \(12/\gcd(12,8)=3\), so \(\langle [8]\rangle=\{[0],[8],[4]\}\).</li>
+        <li>In \(\mathbb{Z}_{18}\), the generators are exactly the classes \([k]\) with \(\gcd(k,18)=1\), namely \([1],[5],[7],[11],[13],[17]\).</li>
+        <li>In a group of order \(15\), any element has order dividing \(15\), so possible element orders are \(1,3,5,15\).</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="permutations" class="content">
+      <h2>Permutation Groups, Cycle Notation, Alternating Groups, and Dihedral Groups</h2>
+
+      <h3>Permutation basics</h3>
+      <p class="placeholder">
+        A permutation of a set \(A\) is a bijection from \(A\) to itself. The permutations of \(\{1,2,\dots,n\}\) form the symmetric group \(S_n\) under composition. Composition is read right to left: apply the rightmost permutation first.
+      </p>
+
+      <ul class="bullets">
+        <li>Rewrite into cycle notation whenever possible.</li>
+        <li>Disjoint cycles commute.</li>
+        <li>The inverse of \((a_1\,a_2\,\dots\,a_k)\) is \((a_k\,\dots\,a_2\,a_1)\).</li>
+        <li>The order of a permutation is the least common multiple of the lengths of its disjoint cycles.</li>
+      </ul>
+
+      <h3>Transpositions and parity</h3>
+      <p class="placeholder">
+        A transposition swaps two entries and fixes the rest. Every permutation can be written as a product of transpositions. The parity of the number of transpositions used is invariant, so every permutation is either even or odd. The set of even permutations is the alternating group \(A_n\), a subgroup of \(S_n\) of index \(2\).
+      </p>
+
+      <ul class="bullets">
+        <li>A \(k\)-cycle can be written as \(k-1\) transpositions.</li>
+        <li>A cycle of odd length is an even permutation iff \(k-1\) is even.</li>
+        <li>\(A_n\) is normal in \(S_n\) because it is the kernel of the sign homomorphism.</li>
+      </ul>
+
+      <h3>Conjugation in \(S_n\)</h3>
+      <p class="placeholder">
+        If \(\mu=(x_1\,x_2\,\dots\,x_k)\) and \(\sigma\in S_n\), then
+        \[
+          \sigma\mu\sigma^{-1}=(\sigma(x_1)\,\sigma(x_2)\,\dots\,\sigma(x_k)).
+        \]
+        Conjugation preserves cycle structure. That means two permutations are conjugate in \(S_n\) exactly when they have the same cycle type.
+      </p>
+
+      <h3>Dihedral groups</h3>
+      <p class="placeholder">
+        The dihedral group \(D_n\) is the symmetry group of a regular \(n\)-gon. It has \(n\) rotations and \(n\) reflections, so \(|D_n|=2n\). A standard presentation is
+        \[
+          D_n=\langle r,s\mid r^n=e,\ s^2=e,\ srs=r^{-1}\rangle.
+        \]
+        Every element can be written either as \(r^k\) or \(sr^k\).
+      </p>
+
+      <h3>Structure facts used a lot</h3>
+      <ul class="bullets">
+        <li>\(S_n\) is nonabelian for \(n\ge 3\).</li>
+        <li>\(A_n\) has order \(n!/2\).</li>
+        <li>\(\langle r\rangle\) is a cyclic subgroup of \(D_n\) of order \(n\).</li>
+        <li>Reflections in \(D_n\) have order \(2\).</li>
+      </ul>
+
+      <h3>Common exam examples</h3>
+      <ul class="bullets">
+        <li>\((1\,2\,3)(1\,2)=(1\,3)\) when composition is read right to left.</li>
+        <li>The order of \((1\,4\,2)(3\,5)\) is \(\operatorname{lcm}(3,2)=6\).</li>
+        <li>The permutation \((1\,2\,3)\) is even because \((1\,2\,3)=(1\,3)(1\,2)\), a product of two transpositions.</li>
+        <li>In \(D_4\), the rotation subgroup \(\langle r\rangle=\{e,r,r^2,r^3\}\) has index \(2\), so it is normal.</li>
+        <li>In \(D_n\), every element has the form \(r^k\) or \(sr^k\), and \((sr^k)^2=e\), so every reflection has order \(2\).</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="cosets" class="content">
+      <h2>Cosets, Equivalence by a Subgroup, and Lagrange's Theorem</h2>
+
+      <h3>Cosets</h3>
+      <p class="placeholder">
+        If \(H\le G\) and \(a\in G\), the left coset is \(aH=\{ah:h\in H\}\) and the right coset is \(Ha=\{ha:h\in H\}\). Cosets are the subgroup version of equivalence classes. In fact, the relation \(a\sim b\iff a^{-1}b\in H\) is an equivalence relation, and its equivalence classes are exactly the left cosets of \(H\).
+      </p>
+
+      <ul class="bullets">
+        <li>\(aH=bH\iff a^{-1}b\in H\).</li>
+        <li>Any two left cosets are either equal or disjoint.</li>
+        <li>Every left coset has the same size as \(H\).</li>
+        <li>The number of left cosets is the index \([G:H]\).</li>
+      </ul>
+
+      <h3>Lagrange's theorem</h3>
+      <p class="placeholder">
+        If \(G\) is finite and \(H\le G\), then
+        \[
+          |G|=[G:H]|H|.
+        \]
+        So the order of every subgroup divides the order of the whole group.
+      </p>
+
+      <h3>Consequences that get used constantly</h3>
+      <ul class="bullets">
+        <li>The order of any element divides \(|G|\).</li>
+        <li>If \(|G|\) is prime, then \(G\) is cyclic.</li>
+        <li>If \(H\) has index \(2\), then \(H\trianglelefteq G\).</li>
+        <li>If a number does not divide \(|G|\), there cannot be a subgroup of that order.</li>
+      </ul>
+
+      <h3>What Lagrange does not say</h3>
+      <ul class="bullets">
+        <li>It does not say that every divisor of \(|G|\) actually occurs as a subgroup order in every group.</li>
+        <li>It does not prove that every element order is possible just because it divides \(|G|\).</li>
+      </ul>
+
+      <h3>Good proof moves with cosets</h3>
+      <ul class="bullets">
+        <li>To prove two cosets are equal, show one representative differs from the other by an element of \(H\).</li>
+        <li>To count cosets in a finite group, use \(|G|/|H|\).</li>
+        <li>To prove a subgroup is normal, compare left and right cosets.</li>
+      </ul>
+
+      <h3>Common exam examples</h3>
+      <ul class="bullets">
+        <li>In \((\mathbb{Z},+)\) with \(H=3\mathbb{Z}\), the cosets are \(0+H,1+H,2+H\). This is the additive version of congruence classes mod \(3\).</li>
+        <li>If \(|G|=12\) and \(|H|=4\), then \([G:H]=3\), so there are exactly three left cosets.</li>
+        <li>If \(|G|=21\), then no subgroup of order \(8\) can exist because \(8\nmid 21\).</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="products" class="content">
+      <h2>Direct Products and Finite Abelian Group Structure</h2>
+
+      <h3>Direct products</h3>
+      <p class="placeholder">
+        If \(G_1,\dots,G_n\) are groups, then \(G_1\times\cdots\times G_n\) is a group under componentwise operation. The identity is the tuple of identities and inverses are taken componentwise.
+      </p>
+
+      <ul class="bullets">
+        <li>\(|(g_1,\dots,g_n)|=\operatorname{lcm}(|g_1|,\dots,|g_n|)\) when the component orders are finite.</li>
+        <li>The product is abelian iff each factor is abelian.</li>
+        <li>A product of cyclic groups need not be cyclic.</li>
+      </ul>
+
+      <h3>When is a product cyclic?</h3>
+      <p class="placeholder">
+        A very common fact is that \(\mathbb{Z}_m\times\mathbb{Z}_n\) is cyclic if and only if \(\gcd(m,n)=1\). More generally, the lcm of the component orders must be large enough to equal the group order if one element is going to generate everything.
+      </p>
+
+      <h3>Finite abelian groups</h3>
+      <p class="placeholder">
+        Finite abelian groups are built from products of cyclic prime-power groups. In practical problem solving, this means that to list possible abelian groups of order \(n\), first factor \(n\) into prime powers, then write all partitions of each prime-power exponent. Each choice gives one isomorphism type.
+      </p>
+
+      <h3>Practical examples of classification thinking</h3>
+      <ul class="bullets">
+        <li>Order \(8\): \(\mathbb{Z}_8\), \(\mathbb{Z}_4\times\mathbb{Z}_2\), \(\mathbb{Z}_2\times\mathbb{Z}_2\times\mathbb{Z}_2\).</li>
+        <li>Order \(12\): abelian possibilities are \(\mathbb{Z}_{12}\) and \(\mathbb{Z}_6\times\mathbb{Z}_2\), which is isomorphic to \(\mathbb{Z}_3\times\mathbb{Z}_2\times\mathbb{Z}_2\).</li>
+        <li>Order \(24\): separate the \(2^3\) part and the \(3\) part, then combine the possible \(2\)-primary pieces with \(\mathbb{Z}_3\).</li>
+      </ul>
+
+      <h3>How to show two groups are not isomorphic</h3>
+      <ul class="bullets">
+        <li>Compare whether they are abelian.</li>
+        <li>Compare whether they are cyclic.</li>
+        <li>Compare numbers of elements of each order.</li>
+        <li>Compare subgroup structure.</li>
+      </ul>
+
+      <h3>Common exam examples</h3>
+      <ul class="bullets">
+        <li>\(\mathbb{Z}_4\not\cong \mathbb{Z}_2\times\mathbb{Z}_2\) because \(\mathbb{Z}_4\) has an element of order \(4\), while \(\mathbb{Z}_2\times\mathbb{Z}_2\) does not.</li>
+        <li>\(\mathbb{Z}_6\cong \mathbb{Z}_2\times\mathbb{Z}_3\) because \(\gcd(2,3)=1\) and both groups are cyclic of order \(6\).</li>
+        <li>\(S_3\not\cong \mathbb{Z}_6\) because one is nonabelian and the other is abelian.</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="homs" class="content">
+      <h2>Group Homomorphisms, Kernels, Images, and Isomorphisms</h2>
+
+      <h3>Homomorphism definition</h3>
+      <p class="placeholder">
+        A map \(\varphi:G\to G'\) is a group homomorphism if \(\varphi(xy)=\varphi(x)\varphi(y)\) for all \(x,y\in G\). That is the whole definition. Injectivity and surjectivity are separate questions.
+      </p>
+
+      <h3>Automatic identities</h3>
+      <ul class="bullets">
+        <li>\(\varphi(e_G)=e_{G'}\).</li>
+        <li>\(\varphi(x^{-1})=\varphi(x)^{-1}\).</li>
+        <li>\(\varphi(x^n)=\varphi(x)^n\) for every integer \(n\).</li>
+        <li>The image of a subgroup is a subgroup.</li>
+      </ul>
+
+      <h3>Kernel and image</h3>
+      <p class="placeholder">
+        The kernel is \(\ker\varphi=\{x\in G:\varphi(x)=e_{G'}\}\), and the image is \(\operatorname{im}\varphi=\{\varphi(x):x\in G\}\). These two objects capture most of the important information in a homomorphism problem.
+      </p>
+
+      <ul class="bullets">
+        <li>The kernel is always a normal subgroup of the domain.</li>
+        <li>The image is always a subgroup of the codomain.</li>
+        <li>\(\varphi\) is injective iff \(\ker\varphi=\{e\}\).</li>
+        <li>\(\varphi\) is surjective iff \(\operatorname{im}\varphi=G'\).</li>
+      </ul>
+
+      <h3>Isomorphisms</h3>
+      <p class="placeholder">
+        An isomorphism is a bijective homomorphism. If there exists an isomorphism \(G\cong H\), then the groups are algebraically the same even if they look different on the surface. Isomorphisms preserve identity, inverses, orders of elements, subgroup structure, normality, cyclicity, and whether the group is abelian.
+      </p>
+
+      <h3>How to prove two groups are isomorphic</h3>
+      <ul class="bullets">
+        <li>Give a candidate map explicitly.</li>
+        <li>Prove it is a homomorphism.</li>
+        <li>Prove it is injective and surjective, or otherwise prove bijection.</li>
+      </ul>
+
+      <h3>How to disprove isomorphism quickly</h3>
+      <ul class="bullets">
+        <li>If one group is abelian and the other is not, they are not isomorphic.</li>
+        <li>If one has an element of a certain order and the other does not, they are not isomorphic.</li>
+        <li>If one is cyclic and the other is not, they are not isomorphic.</li>
+      </ul>
+
+      <h3>Cayley's theorem and permutation representations</h3>
+      <p class="placeholder">
+        Every group is isomorphic to a subgroup of a permutation group. This is a deep structural fact because it means that arbitrary groups can always be realized concretely as symmetries of a set.
+      </p>
+
+      <h3>First isomorphism theorem</h3>
+      <p class="placeholder">
+        For any homomorphism \(\varphi:G\to G'\),
+        \[
+          G/\ker\varphi \cong \operatorname{im}\varphi.
+        \]
+        In many quotient problems, the real job is to identify the correct kernel and image and then quote this theorem cleanly.
+      </p>
+
+      <h3>Common homomorphism examples</h3>
+      <ul class="bullets">
+        <li>The sign map \(\operatorname{sgn}:S_n\to\{\pm1\}\) has kernel \(A_n\), so \(S_n/A_n\cong \{\pm1\}\cong \mathbb{Z}_2\).</li>
+        <li>The map \(\varphi:\mathbb{Z}\to\mathbb{Z}_n\) given by \(\varphi(k)=[k]\) is surjective with kernel \(n\mathbb{Z}\), so \(\mathbb{Z}/n\mathbb{Z}\cong \mathbb{Z}_n\).</li>
+        <li>The determinant map \(\det:GL_n(\mathbb{R})\to\mathbb{R}^{\times}\) is a homomorphism, and its kernel is \(SL_n(\mathbb{R})\).</li>
+        <li>The map \(\varphi:\mathbb{R}\to\mathbb{R}_{>0}\) given by \(\varphi(x)=e^x\) is an isomorphism from \((\mathbb{R},+)\) to \((\mathbb{R}_{>0},\cdot)\).</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="quotients" class="content">
+      <h2>Normal Subgroups and Quotient Groups</h2>
+
+      <h3>Normal subgroup tests</h3>
+      <p class="placeholder">
+        A subgroup \(N\le G\) is normal if it is stable under conjugation. The standard equivalent formulations are:
+      </p>
+      <ul class="bullets">
+        <li>\(gN=Ng\) for all \(g\in G\).</li>
+        <li>\(gNg^{-1}=N\) for all \(g\in G\).</li>
+        <li>\(gng^{-1}\in N\) for all \(g\in G\) and \(n\in N\).</li>
+      </ul>
+
+      <h3>Quick sources of normality</h3>
+      <ul class="bullets">
+        <li>Every subgroup of an abelian group is normal.</li>
+        <li>Every kernel is normal.</li>
+        <li>Every subgroup of index \(2\) is normal.</li>
+      </ul>
+
+      <h3>Quotient groups</h3>
+      <p class="placeholder">
+        If \(N\trianglelefteq G\), then the set of left cosets \(G/N\) becomes a group under
+        \[
+          (aN)(bN)=(ab)N.
+        \]
+        Normality is exactly what makes this operation well defined. Without normality, different choices of representatives can produce different answers.
+      </p>
+
+      <h3>What to remember about quotients</h3>
+      <ul class="bullets">
+        <li>The elements of \(G/N\) are cosets, not elements of \(G\).</li>
+        <li>The identity element is the coset \(N\).</li>
+        <li>The inverse of \(aN\) is \(a^{-1}N\).</li>
+        <li>If \(G\) is finite, then \(|G/N|=[G:N]=|G|/|N|\).</li>
+      </ul>
+
+      <h3>Quotient intuition</h3>
+      <p class="placeholder">
+        Taking a quotient means collapsing all elements of the same coset into one object. In effect, the subgroup \(N\) becomes the identity in the quotient. This is why quotient groups and homomorphisms are so closely related: a homomorphism identifies elements that differ by something in its kernel.
+      </p>
+
+      <h3>Common exam examples</h3>
+      <ul class="bullets">
+        <li>\(\mathbb{Z}/n\mathbb{Z}\) is the standard quotient: all integers that differ by a multiple of \(n\) become the same element.</li>
+        <li>Since \(A_3\trianglelefteq S_3\) and \(|S_3:A_3|=2\), the quotient \(S_3/A_3\) has order \(2\), so it is isomorphic to \(\mathbb{Z}_2\).</li>
+        <li>If \(N\trianglelefteq G\) has index \(3\), then \(|G/N|=3\), so the quotient is cyclic of prime order.</li>
+        <li>In an abelian group \(G\), every subgroup \(N\) is normal, so quotients \(G/N\) always make sense.</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="patterns" class="content">
+      <h2>Proof Patterns and Problem-Solving</h2>
+
+      <h3>Equivalence relation proofs</h3>
+      <p class="placeholder">
+        State the relation carefully. Then prove reflexive, symmetric, and transitive in that order. If one of them fails, stop and give a clean counterexample instead of wandering through extra algebra.
+      </p>
+
+      <h3>Group proofs</h3>
+      <p class="placeholder">
+        First show the operation is binary. Then check closure and associativity. Then identify the identity. Then solve for inverses. If the operation comes from something already known to be associative, say that explicitly.
+      </p>
+
+      <h3>Subgroup proofs</h3>
+      <p class="placeholder">
+        Use the subgroup test. Let \(a,b\in H\). Show \(ab^{-1}\in H\). If you can, also say why \(H\neq\varnothing\). In many proofs this is the fastest correct path.
+      </p>
+
+      <h3>Order arguments</h3>
+      <p class="placeholder">
+        Ask what the least positive exponent is that returns the identity. For permutations, use disjoint cycles. For products, use least common multiples. For finite groups, use divisibility from Lagrange.
+      </p>
+
+      <h3>Isomorphism arguments</h3>
+      <p class="placeholder">
+        To prove groups are isomorphic, define a candidate map and verify the homomorphism law. Then prove bijectivity. To prove groups are not isomorphic, compare invariants and look for a mismatch.
+      </p>
+
+      <h3>Homomorphism arguments</h3>
+      <p class="placeholder">
+        Compute \(\varphi(xy)\) and compare it directly to \(\varphi(x)\varphi(y)\). After that, determine the kernel and image. Many follow-up questions become automatic once those are known.
+      </p>
+
+      <h3>Normality and quotient arguments</h3>
+      <p class="placeholder">
+        If a quotient appears, the first sentence should usually address normality. If normality is true, then justify that the coset product is well defined. If the subgroup is not normal, then the quotient group does not exist.
+      </p>
+
+      <h3>When a problem asks for all possibilities</h3>
+      <ul class="bullets">
+        <li>Use divisibility restrictions from Lagrange.</li>
+        <li>Use cyclic subgroup structure if the group is cyclic.</li>
+        <li>Use element orders and subgroup counts to rule cases out.</li>
+        <li>For finite abelian groups, use the classification into cyclic prime-power factors.</li>
+      </ul>
+
+      <div class="divider"></div>
+    </section>
+
+    <section id="pitfalls" class="content">
+      <h2>Common Mistakes and Corrections</h2>
+      <ul class="bullets">
+        <li><span class="label">Mistake:</span> forgetting to show an operation is well defined on equivalence classes. <span class="label">Correction:</span> prove the result does not depend on the chosen representatives.</li>
+        <li><span class="label">Mistake:</span> treating closure alone as enough for a subgroup. <span class="label">Correction:</span> use \(ab^{-1}\in H\), or the finite subgroup test when allowed.</li>
+        <li><span class="label">Mistake:</span> composing permutations left to right. <span class="label">Correction:</span> apply the rightmost permutation first.</li>
+        <li><span class="label">Mistake:</span> assuming every divisor of \(|G|\) must occur as an element order or subgroup order. <span class="label">Correction:</span> Lagrange gives necessary conditions, not always existence.</li>
+        <li><span class="label">Mistake:</span> thinking a homomorphism must be injective or must come from abelian groups. <span class="label">Correction:</span> the only defining property is preserving the operation.</li>
+        <li><span class="label">Mistake:</span> writing quotient groups for arbitrary subgroups. <span class="label">Correction:</span> only normal subgroups give quotient groups.</li>
+        <li><span class="label">Mistake:</span> confusing the kernel with the image. <span class="label">Correction:</span> the kernel lives in the domain and maps to the identity; the image lives in the codomain and consists of values actually hit.</li>
+        <li><span class="label">Mistake:</span> claiming two groups are isomorphic because they have the same size. <span class="label">Correction:</span> equal size alone is far from enough.</li>
+      </ul>
+    </section>
+
+  </main>
+</body>
+</html>
