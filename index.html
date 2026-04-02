@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Abstract algebra reference: equivalence relations, groups, subgroups, cyclic groups, permutations, cosets, Lagrange theorem, direct products, homomorphisms, isomorphisms, normal subgroups, quotient groups, and proof patterns." name="description"/>
-<meta content="abstract algebra, groups, subgroups, cyclic groups, permutations, cosets, Lagrange theorem, homomorphisms, isomorphisms, quotient groups, normal subgroups, dihedral groups, alternating groups" name="keywords"/>
+<meta content="Abstract algebra reference: equivalence relations, groups, subgroups, cyclic groups, permutations, cosets, Lagrange theorem, direct products, homomorphisms, isomorphisms, normal subgroups, quotient groups, group actions, stabilizers, orbits, ring theory, fields, integral domains, and proof patterns." name="description"/>
+<meta content="abstract algebra, groups, group actions, stabilizers, orbits, subgroups, cyclic groups, permutations, cosets, Lagrange theorem, homomorphisms, isomorphisms, quotient groups, normal subgroups, ring theory, rings, fields, integral domains, dihedral groups, alternating groups" name="keywords"/>
 <title>Math 113 — Abstract Algebra Reference</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -29,6 +29,7 @@
 <div class="byline">by Ellie Ghazaleh</div>
 <div class="meta">
 <div><span class="meta-label">Term:</span> Spring 2026</div>
+<div><span class="meta-label">Topic:</span> Proof-based group theory reference</div>
 </div>
 </div>
 </header>
@@ -44,6 +45,12 @@
 <a href="#products">Products &amp; Abelian Groups</a>
 <a href="#homs">Homomorphisms &amp; Isomorphisms</a>
 <a href="#quotients">Normal &amp; Quotients</a>
+<a href="#group-actions">Group Actions</a>
+<a href="#quotient-continuation">Quotient Continuation</a>
+<a href="#rings">Rings</a>
+<a href="#units-domains-fields">Units, Domains, Fields</a>
+<a href="#ring-homework">Ring Homework Examples</a>
+
 <a href="#patterns">Proof Patterns</a>
 <a href="#counterexamples">Counterexamples</a>
 <a href="#pitfalls">Common Mistakes</a>
@@ -670,6 +677,811 @@ eq\varnothing\) and for all \(a,b\in H\) we have \(ab^{-1}\in H\), then \(H\le G
 <li><span class="label">Mistake:</span> claiming two groups are isomorphic because they have the same size. <span class="label">Correction:</span> equal size alone is far from enough.</li>
 </ul>
 </section>
+
+<section class="content" id="group-actions">
+<h2>Group Actions</h2>
+<p>
+This is the next major idea after quotients. A group action lets us turn an abstract group element into something concrete: a motion, a permutation, a relabeling, or a symmetry of a set. The basic definition is not optional. Most later results about stabilizers, orbits, transitivity, and faithful actions come directly from the two axioms below.
+</p>
+
+<h3>Definition and the two axioms</h3>
+<p>
+A <span class="label">group action</span> of a group \(G\) on a set \(X\) is a map
+\[
+\cdot : G \times X \to X
+\]
+such that for all \(x \in X\) and all \(g_1,g_2 \in G\),
+\[
+e \cdot x = x
+\qquad \text{and} \qquad
+(g_1g_2)\cdot x = g_1 \cdot (g_2 \cdot x).
+\]
+When this happens, \(X\) is called a <span class="label">\(G\)-set</span>.
+</p>
+<div class="note">
+Do not confuse the group law in \(G\) with the action on \(X\). The expression \(g \cdot x\) means “let \(g\) act on the point \(x\).” The point \(x\) does not need to be an element of the group.
+</div>
+
+<h3>Standard examples that should feel automatic</h3>
+<ul class="bullets">
+<li><span class="label">\(\mathrm{GL}_n(\mathbb{R})\) on \(\mathbb{R}^n\):</span> if \(A \in \mathrm{GL}_n(\mathbb{R})\) and \(v \in \mathbb{R}^n\), define \(A \cdot v = Av\). The identity matrix fixes every vector, and \((AB)v = A(Bv)\), so this is an action.</li>
+<li><span class="label">\(S_n\) on \(\{1,2,\dots,n\}\):</span> a permutation sends each symbol \(i\) to the symbol \(\sigma(i)\). This is the most basic way a finite group acts.</li>
+<li><span class="label">\(D_n\) on the vertices of a regular \(n\)-gon:</span> every symmetry sends each vertex to another vertex. This is the geometric model behind many permutation questions.</li>
+<li><span class="label">Any group \(G\) on itself:</span> for example by left multiplication, \(g \cdot x = gx\). This action is especially important when studying cosets.</li>
+<li><span class="label">\(G\) on \(G/H\):</span> if \(H \le G\), then \(G\) acts on the set of left cosets by \(g \cdot (aH) = (ga)H\). This action is well defined and is one of the main bridges between subgroup data and permutation representations.</li>
+<li><span class="label">\(\mathbb{R}^{\times}\) on \(\mathbb{R}^n\):</span> nonzero scalars act by scalar multiplication, \(a \cdot v = av\).</li>
+</ul>
+
+<h3>Every action gives a homomorphism into a symmetric group</h3>
+<p>
+Fix \(g \in G\). Define a map \(\sigma_g : X \to X\) by
+\[
+\sigma_g(x) = g \cdot x.
+\]
+The action axioms imply that \(\sigma_g\) is a permutation of \(X\). In fact, \(\sigma_{g^{-1}}\) is its inverse, because
+\[
+\sigma_{g^{-1}}(\sigma_g(x)) = g^{-1}\cdot(g\cdot x) = (g^{-1}g)\cdot x = e\cdot x = x.
+\]
+So every group action gives a map
+\[
+\Phi : G \to S_X,
+\qquad
+\Phi(g)=\sigma_g,
+\]
+and this map is a homomorphism because
+\[
+\Phi(g_1g_2)(x) = (g_1g_2)\cdot x = g_1 \cdot (g_2 \cdot x)
+= \Phi(g_1)(\Phi(g_2)(x)).
+\]
+So \(\Phi(g_1g_2)=\Phi(g_1)\Phi(g_2)\).
+</p>
+
+<h3>Faithful and transitive actions</h3>
+<ul class="bullets">
+<li><span class="label">Faithful:</span> the action is faithful if different group elements induce different permutations of \(X\). Equivalently, the homomorphism \(\Phi : G \to S_X\) is one-to-one.</li>
+<li><span class="label">Transitive:</span> the action is transitive if for every \(x,y \in X\), there exists \(g \in G\) such that \(g \cdot x = y\). In words, there is only one orbit.</li>
+</ul>
+<p>
+A faithful action means the set \(X\) captures the whole group without collapsing distinct elements together. A transitive action means the group can move any point of the set to any other point.
+</p>
+
+<h3>Fixed points, stabilizers, and why stabilizers are subgroups</h3>
+<p>
+For \(g \in G\), the <span class="label">fixed-point set</span> of \(g\) is
+\[
+X_g = \{x \in X : g \cdot x = x\}.
+\]
+For \(x \in X\), the <span class="label">stabilizer</span> of \(x\) is
+\[
+G_x = \{g \in G : g \cdot x = x\}.
+\]
+The stabilizer is always a subgroup of \(G\). The proof is a clean subgroup-test proof:
+</p>
+<ul class="bullets">
+<li><span class="label">Identity:</span> \(e \cdot x = x\), so \(e \in G_x\).</li>
+<li><span class="label">Closure:</span> if \(g,h \in G_x\), then \(h \cdot x = x\), so
+\[
+(gh)\cdot x = g \cdot (h \cdot x) = g \cdot x = x.
+\]
+Thus \(gh \in G_x\).</li>
+<li><span class="label">Inverses:</span> if \(g \in G_x\), then \(g \cdot x = x\). Apply \(g^{-1}\) to both sides:
+\[
+g^{-1}\cdot(g\cdot x) = g^{-1}\cdot x,
+\]
+so
+\[
+e \cdot x = g^{-1}\cdot x,
+\]
+hence \(g^{-1}\cdot x = x\), and \(g^{-1} \in G_x\).</li>
+</ul>
+
+<h3>Orbits and the orbit equivalence relation</h3>
+<p>
+For \(x \in X\), the <span class="label">orbit</span> of \(x\) is
+\[
+Gx = \{g \cdot x : g \in G\}.
+\]
+Define a relation on \(X\) by
+\[
+x_1 \sim x_2
+\quad \Longleftrightarrow \quad
+\text{there exists } g \in G \text{ such that } g \cdot x_1 = x_2.
+\]
+This is an equivalence relation:
+</p>
+<ul class="bullets">
+<li><span class="label">Reflexive:</span> \(e \cdot x = x\), so \(x \sim x\).</li>
+<li><span class="label">Symmetric:</span> if \(g \cdot x_1 = x_2\), then \(g^{-1} \cdot x_2 = x_1\), so \(x_2 \sim x_1\).</li>
+<li><span class="label">Transitive:</span> if \(g_1 \cdot x_1 = x_2\) and \(g_2 \cdot x_2 = x_3\), then
+\[
+(g_2g_1)\cdot x_1 = g_2 \cdot (g_1 \cdot x_1)=g_2\cdot x_2=x_3.
+\]
+So \(x_1 \sim x_3\).</li>
+</ul>
+<p>
+Therefore the orbits are precisely the equivalence classes, so the set \(X\) is partitioned into disjoint orbits.
+</p>
+
+<h3>Orbit-stabilizer theorem</h3>
+<p>
+If \(G\) is finite and \(x \in X\), then
+\[
+|Gx| = [G : G_x] = \frac{|G|}{|G_x|}.
+\]
+The reason is that the left cosets of \(G_x\) correspond exactly to the distinct points in the orbit of \(x\). The map
+\[
+gG_x \longmapsto g \cdot x
+\]
+is well defined and bijective. So counting cosets gives the orbit size immediately.
+</p>
+<div class="note">
+This theorem turns action questions into subgroup-index questions. In practice, that is the whole point: orbits convert motion data into divisibility and counting data.
+</div>
+
+<h3>Fast proof pattern for action problems</h3>
+<ul class="bullets">
+<li>To prove something is an action, check only the two axioms.</li>
+<li>To prove a stabilizer is a subgroup, use identity, closure, inverse exactly as above.</li>
+<li>To prove a relation defined by “reachable by the action” is an equivalence relation, use \(e\), \(g^{-1}\), and \(g_2g_1\).</li>
+<li>To prove transitivity, start with arbitrary \(x,y \in X\) and explicitly build \(g\) with \(g \cdot x = y\).</li>
+<li>To prove faithfulness, show that the only element fixing every point is the identity.</li>
+</ul>
+<div class="divider"></div>
+</section>
+
+<section class="content" id="quotient-continuation">
+<h2>Quotient Continuation</h2>
+<p>
+The original quotient section above gives the basic definitions. The next layer is what makes quotient groups powerful in proofs: normality is exactly the condition that makes coset multiplication make sense, and every normal subgroup appears as a kernel.
+</p>
+
+<h3>Why normality matters: well defined multiplication on cosets</h3>
+<p>
+Suppose \(H \le G\). We want to define
+\[
+(aH)(bH) = (ab)H.
+\]
+This looks natural, but it only works if the answer is independent of the chosen representatives. In other words, if \(aH=a'H\) and \(bH=b'H\), then we must have
+\[
+(ab)H=(a'b')H.
+\]
+The key theorem is:
+</p>
+<div class="formula">
+\[
+\text{Coset multiplication is well defined on } G/H
+\quad \Longleftrightarrow \quad
+H \trianglelefteq G.
+\]
+</div>
+<p>
+So normality is not some extra decoration. It is the exact reason quotient multiplication is legitimate.
+</p>
+
+<h3>The natural projection and the slogan “all normal subgroups are kernels”</h3>
+<p>
+If \(H \trianglelefteq G\), define
+\[
+\pi : G \to G/H,
+\qquad
+\pi(a)=aH.
+\]
+Then \(\pi\) is a homomorphism because
+\[
+\pi(ab)=(ab)H=(aH)(bH)=\pi(a)\pi(b).
+\]
+Its kernel is exactly \(H\), since
+\[
+\pi(x)=H
+\quad \Longleftrightarrow \quad
+xH=H
+\quad \Longleftrightarrow \quad
+x \in H.
+\]
+This proves a major structural fact:
+</p>
+<div class="formula">
+\[
+H \trianglelefteq G
+\quad \Longrightarrow \quad
+H = \ker(\pi)
+\text{ for the natural quotient map } \pi:G\to G/H.
+\]
+</div>
+
+<h3>First isomorphism theorem</h3>
+<p>
+If \(\varphi : G \to G'\) is a homomorphism and \(H=\ker\varphi\), then
+\[
+G/H \cong \varphi(G).
+\]
+The standard map is
+\[
+\mu : G/H \to \varphi(G),
+\qquad
+\mu(aH)=\varphi(a).
+\]
+This is well defined because if \(aH=bH\), then \(b^{-1}a \in H=\ker\varphi\), so
+\[
+\varphi(b^{-1}a)=e'
+\quad \Longrightarrow \quad
+\varphi(a)=\varphi(b).
+\]
+It is a homomorphism, surjective by construction, and injective because the only coset mapped to the identity is \(H\) itself.
+</p>
+<div class="note">
+This theorem is the cleanest way to identify a quotient. Whenever you can compute a kernel and understand the image, you have a quotient description for free.
+</div>
+
+<h3>Example: \(\mathbb{Z}/n\mathbb{Z} \cong \mathbb{Z}_n\)</h3>
+<p>
+Define
+\[
+\varphi : \mathbb{Z} \to \mathbb{Z}_n,
+\qquad
+\varphi(k)=\overline{k}.
+\]
+Then \(\ker\varphi = n\mathbb{Z}\), so the first isomorphism theorem gives
+\[
+\mathbb{Z}/n\mathbb{Z} \cong \mathbb{Z}_n.
+\]
+On cosets, the group operation is
+\[
+(a+n\mathbb{Z}) + (b+n\mathbb{Z}) = (a+b)+n\mathbb{Z}.
+\]
+This is the model example to keep in your head whenever quotient notation starts feeling abstract.
+</p>
+
+<h3>Example from homework: the subgroup \(H \le S_4\)</h3>
+<p>
+Let
+\[
+H=\{id,(12)(34),(13)(24),(14)(23)\} \subseteq S_4
+\]
+and
+\[
+K=\{\sigma \in S_4 : \sigma(4)=4\}.
+\]
+The homework facts worth remembering are:
+</p>
+<ul class="bullets">
+<li>\(H\) is a subgroup of \(S_4\), and \(H \cong \mathbb{Z}_2 \times \mathbb{Z}_2\).</li>
+<li>\(H\) is normal in \(S_4\) because conjugating a product of two disjoint transpositions gives another product of two disjoint transpositions.</li>
+<li>\(K\) is a subgroup isomorphic to \(S_3\), but \(K\) is not normal in \(S_4\).</li>
+<li>Every coset of \(H\) contains exactly one element of \(K\).</li>
+<li>Therefore
+\[
+S_4/H \cong K \cong S_3.
+\]
+</li>
+</ul>
+<p>
+This is a beautiful quotient example because it makes the abstract quotient \(S_4/H\) look concrete: each coset has one and only one representative fixing \(4\), so the quotient really behaves like \(S_3\).
+</p>
+
+<h3>Why \(S_4 \not\cong H \times K\)</h3>
+<p>
+Even though every element of \(S_4\) can be written uniquely as a product \(hk\) with \(h \in H\) and \(k \in K\), this does <em>not</em> force a direct product isomorphism. A quick invariant kills it:
+</p>
+<ul class="bullets">
+<li>\(H \times K\) has a center containing \(H \times \{id\}\), so its center has at least four elements.</li>
+<li>\(S_4\) has trivial center \(\{id\}\).</li>
+</ul>
+<p>
+Groups with different center sizes cannot be isomorphic. So
+\[
+S_4 \not\cong H \times K.
+\]
+This is a good warning: unique factorization of elements is not by itself enough to conclude “direct product.”
+</p>
+
+<h3>Two normal-subgroup facts that solve many exercises</h3>
+<ul class="bullets">
+<li><span class="label">Intersection of normal subgroups:</span> if \(H_1,H_2 \trianglelefteq G\), then \(H_1 \cap H_2 \trianglelefteq G\).</li>
+<li><span class="label">Unique subgroup of a given order:</span> if a finite group has exactly one subgroup of some order \(m\), then that subgroup is normal, because every conjugate has the same order and uniqueness forces every conjugate to equal the subgroup itself.</li>
+</ul>
+
+<h3>Small quotient examples worth memorizing</h3>
+<ul class="bullets">
+<li>
+In \(\mathbb{Z}_2 \times \mathbb{Z}_4\), the subgroup \(\langle(0,1)\rangle\) has four elements, so the quotient has two elements and is therefore isomorphic to \(\mathbb{Z}_2\).
+</li>
+<li>
+In \(\mathbb{Z}_2 \times \mathbb{Z}_4\), the subgroup \(\langle(1,2)\rangle\) has two elements, so the quotient has order \(4\). Because it contains an element of order \(4\), it must be isomorphic to \(\mathbb{Z}_4\), not \(\mathbb{Z}_2 \times \mathbb{Z}_2\).
+</li>
+</ul>
+<div class="divider"></div>
+</section>
+
+<section class="content" id="rings">
+<h2>Rings</h2>
+<p>
+The course then shifts from one binary operation to two. Group theory tells you how to handle one operation cleanly. Ring theory keeps the additive group structure but adds a second operation, multiplication, tied to addition by distributivity.
+</p>
+
+<h3>Definition of a ring</h3>
+<p>
+A <span class="label">ring</span> \(\langle R,+,\cdot\rangle\) is a set \(R\) with two binary operations such that:
+</p>
+<ol class="numbered">
+<li>\(\langle R,+\rangle\) is an abelian group.</li>
+<li>Multiplication is associative:
+\[
+a(bc)=(ab)c
+\qquad \text{for all } a,b,c \in R.
+\]</li>
+<li>Multiplication distributes over addition on both sides:
+\[
+a(b+c)=ab+ac,
+\qquad
+(a+b)c=ac+bc.
+\]</li>
+</ol>
+<p>
+A ring is <span class="label">commutative</span> if \(ab=ba\) for all \(a,b \in R\). A ring has <span class="label">unity</span> if there exists an element \(1 \in R\) such that
+\[
+1a=a1=a
+\qquad \text{for all } a \in R.
+\]
+</p>
+
+<h3>Additive notation that should become automatic</h3>
+<ul class="bullets">
+<li><span class="label">Additive identity:</span> written \(0\).</li>
+<li><span class="label">Additive inverse of \(a\):</span> written \(-a\).</li>
+<li><span class="label">Repeated addition:</span> \(na = a+\cdots+a\) (\(n\) times) for \(n>0\).</li>
+</ul>
+<p>
+Since \(\langle R,+\rangle\) is an abelian group, every additive fact from group theory is available inside every ring.
+</p>
+
+<h3>Basic examples</h3>
+<ul class="bullets">
+<li><span class="label">\(\mathbb{Z}, \mathbb{Q}, \mathbb{R}, \mathbb{C}\):</span> all are commutative rings with unity.</li>
+<li><span class="label">Matrix rings \(M_n(\mathbb{R})\):</span> matrices form a ring under matrix addition and multiplication. For \(n \ge 2\), this ring is usually <em>not</em> commutative.</li>
+<li><span class="label">Function rings:</span> if \(F\) is the set of functions \(\mathbb{R}\to\mathbb{R}\), then with pointwise addition and pointwise multiplication,
+\[
+(f+g)(x)=f(x)+g(x),
+\qquad
+(fg)(x)=f(x)g(x),
+\]
+the set \(F\) is a commutative ring with unity.</li>
+<li><span class="label">\(\mathbb{Z}_n\):</span> integers mod \(n\) form a commutative ring with unity.</li>
+<li><span class="label">Direct product of rings:</span> if \(R_1,\dots,R_n\) are rings, then \(R_1\times\cdots\times R_n\) is a ring under componentwise operations:
+\[
+(a_1,\dots,a_n)+(b_1,\dots,b_n)=(a_1+b_1,\dots,a_n+b_n),
+\]
+\[
+(a_1,\dots,a_n)(b_1,\dots,b_n)=(a_1b_1,\dots,a_nb_n).
+\]</li>
+</ul>
+
+<h3>Derived ring identities you should know cold</h3>
+<p>
+These are short proofs from distributivity and the additive-group axioms:
+</p>
+<ul class="bullets">
+<li><span class="label">Multiplying by zero:</span>
+\[
+a0 = 0a = 0.
+\]
+Proof idea: \(a(0+0)=a0+a0\), so \(a0=a0+a0\), then add \(-a0\) to both sides.</li>
+<li><span class="label">Signs move out of products:</span>
+\[
+a(-b)=(-a)b=-(ab).
+\]
+</li>
+<li><span class="label">Double negatives cancel in multiplication:</span>
+\[
+(-a)(-b)=ab.
+\]
+</li>
+</ul>
+<p>
+These are not separate axioms. They are consequences, and you should be able to re-derive them quickly.
+</p>
+
+<h3>Ring homomorphisms</h3>
+<p>
+A <span class="label">ring homomorphism</span> \(\varphi:R\to S\) preserves both operations:
+\[
+\varphi(a+b)=\varphi(a)+\varphi(b),
+\qquad
+\varphi(ab)=\varphi(a)\varphi(b).
+\]
+Typical examples:
+</p>
+<ul class="bullets">
+<li><span class="label">Reduction mod \(n\):</span>
+\[
+\varphi:\mathbb{Z}\to\mathbb{Z}_n,
+\qquad
+\varphi(a)=\overline{a}.
+\]
+</li>
+<li><span class="label">Evaluation:</span> if \(F\) is a ring of functions and \(c\) is fixed, then
+\[
+\operatorname{ev}_c(f)=f(c)
+\]
+is a ring homomorphism.</li>
+</ul>
+<p>
+Because a ring homomorphism is in particular an additive-group homomorphism, its kernel with respect to addition controls injectivity. In practice, for a ring map \(\varphi:R\to S\), injectivity is equivalent to
+\[
+\ker\varphi=\{0\},
+\]
+where the kernel means \(\{r\in R:\varphi(r)=0\}\).
+</p>
+
+<h3>Subrings</h3>
+<p>
+A <span class="label">subring</span> of \(R\) is a subset \(S \subseteq R\) that is itself a ring under the inherited operations. To prove something is a subring, the useful test is usually:
+</p>
+<ul class="bullets">
+<li>\(S\) is nonempty,</li>
+<li>\(a-b \in S\) whenever \(a,b \in S\),</li>
+<li>\(ab \in S\) whenever \(a,b \in S\).</li>
+</ul>
+<p>
+This packages closure under addition and additive inverses into one line.
+</p>
+<div class="divider"></div>
+</section>
+
+<section class="content" id="units-domains-fields">
+<h2>Units, Domains, Fields</h2>
+<p>
+Once a ring has unity, the next question is which elements actually have multiplicative inverses. This splits rings into a useful hierarchy: units, division rings, fields, and integral domains.
+</p>
+
+<h3>Units and multiplicative inverses</h3>
+<p>
+Assume \(R\) has unity \(1\). An element \(a \in R\) is a <span class="label">unit</span> if there exists \(a^{-1} \in R\) such that
+\[
+aa^{-1}=a^{-1}a=1.
+\]
+The inverse, if it exists, is unique. A quick proof: if \(ab=1\) and \(ca=1\), then
+\[
+c=c(ab)=(ca)b=b.
+\]
+So there cannot be two different multiplicative inverses.
+</p>
+<div class="note">
+In a nonzero ring with unity, \(0\) cannot be a unit. If \(0b=1\), then the left side is \(0\), impossible.
+</div>
+
+<h3>Division rings and fields</h3>
+<ul class="bullets">
+<li><span class="label">Division ring:</span> a ring with unity in which every nonzero element is a unit.</li>
+<li><span class="label">Field:</span> a commutative division ring.</li>
+</ul>
+<p>
+So every field has addition, subtraction, multiplication, and division by every nonzero element. Standard examples are \(\mathbb{Q}, \mathbb{R}, \mathbb{C}\).
+</p>
+
+<h3>Divisors of zero</h3>
+<p>
+Nonzero elements \(a,b \in R\) are called <span class="label">zero divisors</span> if
+\[
+ab=0.
+\]
+This is exactly the obstruction to cancellation. If zero divisors exist, you can lose information by multiplying.
+</p>
+<p>
+A standard example is \(\mathbb{Z}_{12}\), where
+\[
+\overline{3}\,\overline{4}=\overline{12}=\overline{0}.
+\]
+So \(\overline{3}\) and \(\overline{4}\) are zero divisors in \(\mathbb{Z}_{12}\).
+</p>
+
+<h3>Cancellation and zero divisors</h3>
+<p>
+In any ring, if \(a\) is a unit and \(ab=ac\), then multiplying by \(a^{-1}\) gives \(b=c\). More generally:
+</p>
+<div class="formula">
+\[
+\text{Cancellation holds in } R
+\quad \Longleftrightarrow \quad
+R \text{ has no zero divisors.}
+\]
+</div>
+<p>
+Proof sketch:
+</p>
+<ul class="bullets">
+<li>If \(R\) has no zero divisors and \(ab=ac\), then
+\[
+a(b-c)=0.
+\]
+If \(a\ne 0\), the no-zero-divisor condition forces \(b-c=0\), so \(b=c\).</li>
+<li>Conversely, if cancellation always holds and \(ab=0\) with \(a\ne 0\), then \(ab=a0\), so cancel \(a\) to get \(b=0\). Thus no nonzero zero divisors exist.</li>
+</ul>
+
+<h3>Integral domains</h3>
+<p>
+An <span class="label">integral domain</span> is a commutative ring with unity \(1\neq 0\) and no zero divisors.
+</p>
+<ul class="bullets">
+<li>\(\mathbb{Z}\) is an integral domain.</li>
+<li>\(\mathbb{Z}_p\) is an integral domain when \(p\) is prime.</li>
+<li>\(\mathbb{Z}_n\) is <em>not</em> an integral domain when \(n\) is composite, because then nontrivial zero divisors appear.</li>
+<li>\(\mathbb{Z}\times\mathbb{Z}\) is not an integral domain, because
+\[
+(1,0)(0,1)=(0,0).
+\]
+</li>
+</ul>
+
+<h3>Why products of domains fail to be domains</h3>
+<p>
+Even if \(R\) and \(S\) are both integral domains, the direct product \(R\times S\) is not. Indeed,
+\[
+(r,0)(0,s)=(0,0)
+\]
+for any nonzero \(r \in R\) and nonzero \(s \in S\). So \(R\times S\) has zero divisors automatically.
+</p>
+
+<h3>Every field is an integral domain</h3>
+<p>
+Let \(R\) be a field. Suppose \(ab=0\) and \(a\ne 0\). Since \(a\) is nonzero in a field, it has an inverse \(a^{-1}\). Multiply by \(a^{-1}\):
+\[
+a^{-1}(ab)=a^{-1}0
+\quad \Longrightarrow \quad
+(a^{-1}a)b=0
+\quad \Longrightarrow \quad
+1\cdot b=0
+\quad \Longrightarrow \quad
+b=0.
+\]
+So there are no zero divisors. Since fields are commutative rings with unity, every field is an integral domain.
+</p>
+
+<h3>Every finite integral domain is a field</h3>
+<p>
+This theorem is one of the most useful finite-ring facts:
+</p>
+<div class="formula">
+\[
+\text{If } R \text{ is a finite integral domain, then } R \text{ is a field.}
+\]
+</div>
+<p>
+Why it works: fix \(a \in R\) with \(a \ne 0\), and consider the list
+\[
+aa_1, aa_2, \dots, aa_n
+\]
+where \(R=\{a_1,\dots,a_n\}\). Since cancellation holds in an integral domain, these products are all distinct. A finite set with \(n\) distinct elements chosen from an \(n\)-element set must be the whole set. Therefore \(1\) appears in the list, so
+\[
+aa_i=1
+\]
+for some \(a_i\). Thus every nonzero element has an inverse, so \(R\) is a field.
+</p>
+<p>
+Immediate corollary:
+\[
+p \text{ prime} \quad \Longrightarrow \quad \mathbb{Z}_p \text{ is a field.}
+\]
+</p>
+
+<h3>Characteristic of a ring</h3>
+<p>
+The <span class="label">characteristic</span> of a ring \(R\) measures how many times you can add the multiplicative identity before getting zero.
+</p>
+<ul class="bullets">
+<li><span class="label">Characteristic \(0\):</span> there is no positive integer \(n\) such that
+\[
+n\cdot a = 0
+\qquad \text{for every } a \in R.
+\]
+Equivalently, in a ring with unity, \(n\cdot 1 \ne 0\) for every positive integer \(n\).</li>
+<li><span class="label">Characteristic \(n\):</span> \(n\) is the smallest positive integer such that
+\[
+n\cdot a=0
+\qquad \text{for every } a \in R.
+\]
+</li>
+</ul>
+<p>
+Examples:
+</p>
+<ul class="bullets">
+<li>\(\operatorname{char}(\mathbb{Z})=\operatorname{char}(\mathbb{Q})=\operatorname{char}(\mathbb{R})=\operatorname{char}(\mathbb{C})=0\).</li>
+<li>\(\operatorname{char}(\mathbb{Z}_n)=n\).</li>
+</ul>
+<p>
+A useful identity in rings with unity is
+\[
+n\cdot a = (n\cdot 1)a.
+\]
+So checking \(n\cdot 1\) is enough to determine characteristic in most concrete examples.
+</p>
+<div class="divider"></div>
+</section>
+
+<section class="content" id="ring-homework">
+<h2>Selected Homework-Style Examples</h2>
+<p>
+These are the kinds of examples that expose the exact definition or theorem you are supposed to use. They are worth studying because they show the difference between “looks plausible” and “actually respects the algebraic structure.”
+</p>
+
+<h3>Homomorphism check: parity map on \(\mathbb{Z}_6\) versus \(\mathbb{Z}_9\)</h3>
+<p>
+Define \(\varphi(x)\) to be the remainder of \(x\) upon division by \(2\).
+</p>
+<ul class="bullets">
+<li><span class="label">\(\mathbb{Z}_6 \to \mathbb{Z}_2\):</span> this is a homomorphism, because parity behaves compatibly with addition mod \(6\).</li>
+<li><span class="label">\(\mathbb{Z}_9 \to \mathbb{Z}_2\):</span> this is not a homomorphism. A quick counterexample is
+\[
+6+6 \equiv 3 \pmod 9,
+\]
+but
+\[
+\varphi(6)+\varphi(6)=0+0=0
+\qquad \text{while} \qquad
+\varphi(3)=1.
+\]
+So \(\varphi(6+6)\ne \varphi(6)+\varphi(6)\).</li>
+</ul>
+<div class="note">
+When a map is defined by “take a remainder,” always check well-definedness first and then the homomorphism law second.
+</div>
+
+<h3>Inversion map \(g \mapsto g^{-1}\)</h3>
+<p>
+For a group \(G\), define \(\varphi(g)=g^{-1}\). Then
+\[
+\varphi(xy)=(xy)^{-1}=y^{-1}x^{-1},
+\]
+while
+\[
+\varphi(x)\varphi(y)=x^{-1}y^{-1}.
+\]
+These are equal exactly when the relevant elements commute. Therefore:
+</p>
+<div class="formula">
+\[
+g \mapsto g^{-1}
+\text{ is a homomorphism if } G \text{ is abelian, and in general not otherwise.}
+\]
+</div>
+<p>
+A concrete counterexample comes from \(S_3\).
+</p>
+
+<h3>Kernel computation from a cyclic image</h3>
+<p>
+Suppose \(\varphi:\mathbb{Z}\to S_8\) is defined by
+\[
+\varphi(1)=(1\,4\,2\,6)(2\,5\,7).
+\]
+This permutation simplifies to the \(6\)-cycle
+\[
+(1\,4\,2\,5\,7\,6).
+\]
+Since \(\varphi(n)=\varphi(1)^n\), the kernel is exactly the set of multiples of the order of \(\varphi(1)\), namely
+\[
+\ker\varphi = 6\mathbb{Z}.
+\]
+This is the right pattern whenever the domain is \(\mathbb{Z}\): determine \(\varphi(1)\), compute its order, and that order generates the kernel.
+</p>
+
+<h3>Quotient example from \(S_4\)</h3>
+<p>
+With
+\[
+H=\{id,(12)(34),(13)(24),(14)(23)\},
+\]
+the quotient \(S_4/H\) is isomorphic to \(S_3\). The way to remember this is not the raw proof details but the mechanism:
+</p>
+<ul class="bullets">
+<li>build a subgroup \(K\) fixing the symbol \(4\),</li>
+<li>show each coset of \(H\) contains exactly one element of \(K\),</li>
+<li>identify the quotient with \(K\), then identify \(K\) with \(S_3\).</li>
+</ul>
+
+<h3>Function set with pointwise addition and composition</h3>
+<p>
+Let \(F\) be the set of all functions \(f:\mathbb{R}\to\mathbb{R}\). Use pointwise addition
+\[
+(f+g)(x)=f(x)+g(x)
+\]
+and composition as multiplication,
+\[
+(f\circ g)(x)=f(g(x)).
+\]
+Then:
+</p>
+<ul class="bullets">
+<li>\((F,+)\) is an abelian group.</li>
+<li>Composition is associative.</li>
+<li>The identity map \(id_{\mathbb{R}}\) acts as a multiplicative identity.</li>
+<li>Right distributivity holds:
+\[
+(f+g)\circ h = f\circ h + g\circ h.
+\]
+</li>
+<li>But left distributivity generally fails:
+\[
+f\circ(g+h) \ne f\circ g + f\circ h.
+\]
+</li>
+</ul>
+<p>
+So the missing ring axiom is the distributive law in the slot
+\[
+a\cdot(b+c)=ab+ac.
+\]
+Because multiplication here is composition, that is exactly the failed identity
+\[
+f\circ(g+h)=f\circ g + f\circ h.
+\]
+</p>
+
+<h3>The min-plus structure on \(\overline{\mathbb{R}}\)</h3>
+<p>
+Let \(\overline{\mathbb{R}}=\mathbb{R}\cup\{\infty\}\), define
+\[
+a \oplus b = \min(a,b),
+\qquad
+a \otimes b = a+b
+\]
+(with the usual convention that \(a+\infty=\infty\)). This structure behaves like a field in many formal ways, but one field axiom fails:
+</p>
+<div class="formula">
+\[
+(\overline{\mathbb{R}},\oplus)
+\text{ does not form an additive group, because additive inverses do not exist in general.}
+\]
+</div>
+<p>
+The additive identity for \(\oplus\) is \(\infty\), since \(\min(a,\infty)=a\). But for a finite real number \(a\), there is no element \(b\) such that
+\[
+a \oplus b = \infty.
+\]
+So the failure is the additive-inverse axiom.
+</p>
+
+<h3>The field \(\mathbb{Q}(\sqrt{5})\)</h3>
+<p>
+Consider
+\[
+\{a+b\sqrt{5} : a,b \in \mathbb{Q}\}.
+\]
+This set is closed under the usual addition and multiplication because
+\[
+(a+b\sqrt{5})+(c+d\sqrt{5})=(a+c)+(b+d)\sqrt{5},
+\]
+\[
+(a+b\sqrt{5})(c+d\sqrt{5})=(ac+5bd)+(ad+bc)\sqrt{5}.
+\]
+For nonzero \(a+b\sqrt{5}\), the inverse is obtained by multiplying by the conjugate:
+\[
+(a+b\sqrt{5})^{-1}
+=
+\frac{a-b\sqrt{5}}{a^2-5b^2}.
+\]
+As long as \(a+b\sqrt{5}\ne 0\), the denominator \(a^2-5b^2\) is nonzero, so the inverse stays inside the same set. Therefore this is a field.
+</p>
+
+<h3>One compact comparison chart</h3>
+<ul class="bullets">
+<li><span class="label">Ring:</span> additive abelian group + associative multiplication + distributivity.</li>
+<li><span class="label">Commutative ring:</span> ring + \(ab=ba\).</li>
+<li><span class="label">Ring with unity:</span> ring + multiplicative identity \(1\).</li>
+<li><span class="label">Integral domain:</span> commutative ring with unity + no zero divisors.</li>
+<li><span class="label">Field:</span> commutative ring with unity + every nonzero element invertible.</li>
+</ul>
+<p>
+Containment to remember:
+\[
+\text{field} \Longrightarrow \text{integral domain} \Longrightarrow \text{commutative ring with unity}.
+\]
+The converses fail in general. For example, \(\mathbb{Z}\) is an integral domain but not a field.
+</p>
+<div class="divider"></div>
+</section>
+
 </main>
 </body>
 </html>
