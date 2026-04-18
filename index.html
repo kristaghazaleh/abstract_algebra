@@ -50,6 +50,9 @@
 <a href="#rings">Rings</a>
 <a href="#units-domains-fields">Units, Domains, Fields</a>
 <a href="#ring-homework">Ring Homework Examples</a>
+<a href="#modular-arithmetic">Modular Arithmetic</a>
+<a href="#fields-of-quotients">Fields of Quotients</a>
+<a href="#polynomial-rings">Polynomial Rings</a>
 
 <a href="#patterns">Proof Patterns</a>
 <a href="#counterexamples">Counterexamples</a>
@@ -1479,6 +1482,430 @@ Containment to remember:
 \]
 The converses fail in general. For example, \(\mathbb{Z}\) is an integral domain but not a field.
 </p>
+<div class="divider"></div>
+</section>
+
+
+<section class="content" id="modular-arithmetic">
+<h2>Modular Arithmetic in \(\mathbb{Z}_n\)</h2>
+<p>
+The first ring examples in this part of the course are the residue-class rings \(\mathbb{Z}_n\). These are concrete enough to compute in by hand, but rich enough to show exactly how units, zero divisors, and solvability of congruences interact. The right invariant in almost every question is \(\gcd(a,n)\).
+</p>
+
+<h3>Units and zero divisors in \(\mathbb{Z}_n\)</h3>
+<p>
+Let \(a \in \mathbb{Z}_n\). Then the following are equivalent for a nonzero class \(\overline{a}\):
+</p>
+<ul class="bullets">
+<li><span class="label">\(\overline{a}\) is a unit:</span> there exists \(\overline{u} \in \mathbb{Z}_n\) such that \(\overline{a}\,\overline{u}=\overline{1}\).</li>
+<li><span class="label">\(\gcd(a,n)=1\):</span> by Bézout, there exist integers \(u,v\) with \(au+nv=1\), so mod \(n\) this becomes \(au \equiv 1 \pmod n\).</li>
+<li><span class="label">\(\overline{a}\) is not a zero divisor:</span> if \(\gcd(a,n)=1\), then cancellation works against \(\overline{a}\); if \(\gcd(a,n)=d>1\), then \(a\cdot (n/d)\) is divisible by \(n\), so \(\overline{a}\) is a zero divisor.</li>
+</ul>
+<div class="formula">
+\[
+\overline{a} \in \mathbb{Z}_n^\times
+\quad \Longleftrightarrow \quad
+\gcd(a,n)=1.
+\]
+</div>
+<p>
+Equivalently, for \(\overline{a}\neq \overline{0}\) in \(\mathbb{Z}_n\), being a zero divisor, having \(\gcd(a,n)\neq 1\), and failing to be a unit are all the same condition.
+</p>
+
+<h3>The group of units</h3>
+<p>
+If \(R\) is any ring with unity, the set of units \(R^\times\) forms a group under multiplication. In particular,
+\[
+\mathbb{Z}_n^\times = \{\overline{a} \in \mathbb{Z}_n : \gcd(a,n)=1\}
+\]
+forms a finite group. When \(p\) is prime, every nonzero class mod \(p\) is relatively prime to \(p\), so
+\[
+\mathbb{Z}_p^\times = \mathbb{Z}_p \setminus \{\overline{0}\}
+\]
+has order \(p-1\).
+</p>
+<ul class="bullets">
+<li><span class="label">Closure:</span> the product of two units is a unit, and \( (ab)^{-1}=b^{-1}a^{-1}\).</li>
+<li><span class="label">Identity:</span> \(1\) is a unit.</li>
+<li><span class="label">Inverses:</span> if \(a\) is a unit, then so is \(a^{-1}\), with inverse \(a\).</li>
+</ul>
+
+<h3>Solving \(ax \equiv b \pmod n\)</h3>
+<p>
+This is the core computational theorem for congruences. The answer splits into two cases.
+</p>
+<ul class="bullets">
+<li><span class="label">Case 1: \(\gcd(a,n)=1\).</span> Then \(\overline{a}\) is a unit in \(\mathbb{Z}_n\), so the equation has the unique solution
+\[
+x \equiv a^{-1}b \pmod n.
+\]
+</li>
+<li><span class="label">Case 2: \(\gcd(a,n)=d>1\).</span> Then \(ax \equiv b \pmod n\) has solutions if and only if \(d \mid b\). When solutions exist, divide by \(d\):
+\[
+a'=a/d, \qquad b'=b/d, \qquad n'=n/d.
+\]
+Now \(\gcd(a',n')=1\), so \(a'x \equiv b' \pmod{n'}\) has a unique solution \(x_0\) mod \(n'\), and the original congruence has exactly \(d\) solutions mod \(n\):
+\[
+x \equiv x_0,\ x_0+n',\ x_0+2n',\ \dots,\ x_0+(d-1)n' \pmod n.
+\]
+</li>
+</ul>
+
+<h3>Examples</h3>
+<ul class="bullets">
+<li><span class="label">Example 1:</span>
+\[
+5x \equiv 3 \pmod 6.
+\]
+Since \(\gcd(5,6)=1\) and \(5^{-1} \equiv 5 \pmod 6\), we get
+\[
+x \equiv 5\cdot 3 \equiv 15 \equiv 3 \pmod 6.
+\]
+So the unique solution is \(x \equiv 3 \pmod 6\).</li>
+<li><span class="label">Example 2:</span>
+\[
+15x \equiv 27 \pmod{18}.
+\]
+Here \(d=\gcd(15,18)=3\), and \(3 \mid 27\), so solutions exist. Divide by \(3\):
+\[
+5x \equiv 9 \equiv 3 \pmod 6.
+\]
+From the first example, \(x \equiv 3 \pmod 6\). Lifting back to mod \(18\) gives the three solutions
+\[
+x \equiv 3,\ 9,\ 15 \pmod{18}.
+\]
+</li>
+</ul>
+
+<h3>Fermat's little theorem and Euler's theorem</h3>
+<p>
+Because \(\mathbb{Z}_p^\times\) is a group of order \(p-1\) when \(p\) is prime, Lagrange's theorem gives Fermat's little theorem:
+</p>
+<div class="formula">
+\[
+ p \text{ prime and } a \not\equiv 0 \pmod p
+ \quad \Longrightarrow \quad
+ a^{p-1} \equiv 1 \pmod p.
+\]
+</div>
+<p>
+More generally, if \(\varphi(n)=|\mathbb{Z}_n^\times|\) is Euler's totient function, then every unit \(\overline{a}\\in \mathbb{Z}_n^\times\) satisfies
+\[
+a^{\varphi(n)} \equiv 1 \pmod n.
+\]
+This is Euler's theorem. It is exactly the same group-theoretic argument: the order of an element divides the order of the finite group containing it.
+</p>
+<ul class="bullets">
+<li><span class="label">Example:</span> the units mod \(12\) are \(1,5,7,11\), so \(\varphi(12)=4\). Hence if \(\gcd(a,12)=1\), then \(a^4 \equiv 1 \pmod{12}\).</li>
+<li><span class="label">Special case:</span> if \(p\) is prime, then \(\varphi(p)=p-1\), so Euler's theorem reduces to Fermat's little theorem.</li>
+</ul>
+<div class="divider"></div>
+</section>
+
+<section class="content" id="fields-of-quotients">
+<h2>Fields of Quotients</h2>
+<p>
+An integral domain behaves like a ring in which cancellation works, but division is still missing in general. The field-of-quotients construction adjoins exactly the inverses that are needed and nothing more. This is the ring-theoretic analogue of building \(\mathbb{Q}\) from \(\mathbb{Z}\).
+</p>
+
+<h3>Setup and equivalence classes of fractions</h3>
+<p>
+Let \(D\) be an integral domain. Define
+\[
+S = \{(a,b) \in D \times D : b \neq 0\}.
+\]
+We think of \((a,b)\) as the formal fraction \(a/b\). Two pairs represent the same fraction if
+\[
+(a,b) \sim (c,d)
+\quad \Longleftrightarrow \quad
+ad = bc.
+\]
+This is the natural generalization of ordinary fraction equality. Let \([a,b]\) denote the equivalence class of \((a,b)\). The field of quotients is the set
+\[
+F = \{[a,b] : (a,b) \in S\}.
+\]
+</p>
+
+<h3>Operations on \(F\)</h3>
+<p>
+Addition and multiplication are defined by the usual fraction rules:
+</p>
+<div class="formula">
+\[
+[a,b] + [c,d] = [ad+bc, bd],
+\qquad
+[a,b]\,[c,d] = [ac, bd].
+\]
+</div>
+<p>
+The first real task in the construction is proving these operations are well defined, meaning they do not depend on the representatives chosen. Once that is done, the field axioms follow in the expected way.
+</p>
+<ul class="bullets">
+<li><span class="label">Additive identity:</span> \([0,1]\).</li>
+<li><span class="label">Additive inverse of \([a,b]\):</span> \([-a,b]\).</li>
+<li><span class="label">Multiplicative identity:</span> \([1,1]\).</li>
+<li><span class="label">Multiplicative inverse of a nonzero class:</span> if \([a,b] \neq [0,1]\), then \(a \neq 0\) and
+\[
+[a,b]^{-1} = [b,a].
+\]
+</li>
+</ul>
+<p>
+Therefore \(F\) is a field.
+</p>
+
+<h3>Embedding the integral domain into its quotient field</h3>
+<p>
+There is a natural injective ring homomorphism
+\[
+i : D \to F,
+\qquad
+i(a) = [a,1].
+\]
+It preserves addition and multiplication because
+\[
+i(a+b)=[a+b,1]=[a,1]+[b,1],
+\qquad
+i(ab)=[ab,1]=[a,1][b,1].
+\]
+It is injective because \(i(a)=i(b)\) means \([a,1]=[b,1]\), hence \((a,1)\sim (b,1)\), so \(a=b\).
+</p>
+<div class="note">
+The image \(i(D)\) is a subring of \(F\), but in general it is not a subfield. For example, \(\mathbb{Z}\) sits inside \(\mathbb{Q}\), but \(2^{-1}=1/2\) is not an integer.
+</div>
+
+<h3>Why every element really is a quotient</h3>
+<p>
+Inside \(F\), every element can be written as a quotient of two elements coming from \(D\):
+\[
+[a,b] = [a,1]\,[b,1]^{-1}.
+\]
+This is the precise reason for the name <span class="label">field of quotients</span>. It is the smallest field obtained by forcing every nonzero element of \(D\) to become invertible.
+</p>
+
+<h3>Minimality and uniqueness</h3>
+<p>
+If \(L\) is any field containing \(D\) as a subring, then every formal quotient \(a/b\) with \(a,b \in D\), \(b\neq 0\), already makes sense inside \(L\). This gives a natural map
+\[
+t : F \to L,
+\qquad
+t([a,b]) = ab^{-1}.
+\]
+That map is an injective ring homomorphism, so \(F\) is isomorphic to a subfield of \(L\). This proves two important facts.
+</p>
+<ul class="bullets">
+<li><span class="label">Minimality:</span> every field containing \(D\) contains an isomorphic copy of the field of quotients of \(D\).</li>
+<li><span class="label">Uniqueness:</span> any two fields of quotients of the same integral domain are isomorphic.</li>
+</ul>
+<p>
+A useful special case is: if \(D\) is already a field, then any field of quotients of \(D\) is isomorphic to \(D\) itself.
+</p>
+
+<h3>Examples</h3>
+<ul class="bullets">
+<li><span class="label">Integers:</span> the field of quotients of \(\mathbb{Z}\) is \(\mathbb{Q}\).</li>
+<li><span class="label">Gaussian integers:</span> if
+\[
+D = \{m+ni : m,n \in \mathbb{Z}\},
+\]
+then the field of quotients is
+\[
+\mathbb{Q}(i)=\{a+bi : a,b \in \mathbb{Q}\}.
+\]
+</li>
+<li><span class="label">Quadratic integers in \(\sqrt{2}\):</span> if
+\[
+D = \{m+n\sqrt{2} : m,n \in \mathbb{Z}\},
+\]
+then the field of quotients is
+\[
+\mathbb{Q}(\sqrt{2})=\{a+b\sqrt{2} : a,b \in \mathbb{Q}\}.
+\]
+</li>
+</ul>
+<p>
+The proof in the quadratic case is exactly the same conjugate trick used in familiar radical simplifications:
+\[
+\frac{m+n\sqrt{2}}{r+s\sqrt{2}}
+=
+\frac{(m+n\sqrt{2})(r-s\sqrt{2})}{r^2-2s^2}
+=
+\frac{mr-2ns}{r^2-2s^2}
++
+\frac{nr-ms}{r^2-2s^2}\sqrt{2},
+\]
+so every quotient has the form \(a+b\sqrt{2}\) with rational coefficients.
+</p>
+<div class="divider"></div>
+</section>
+
+<section class="content" id="polynomial-rings">
+<h2>Polynomial Rings</h2>
+<p>
+Once rings and quotient fields are in place, the next major construction is the polynomial ring \(R[x]\). The point is that \(x\) is an indeterminate, a formal symbol, not a fixed number. Polynomials are algebraic objects built from coefficients in \(R\), and only later do we evaluate them at actual elements.
+</p>
+
+<h3>Definition and degree</h3>
+<p>
+Given a ring \(R\), a <span class="label">polynomial with coefficients in \(R\)</span> is a formal sum
+\[
+f(x)=\sum_{i=0}^{\infty} a_i x^i
+\]
+with \(a_i \in R\) for all \(i\), and with only finitely many coefficients nonzero. Usually we write it in the familiar finite form
+\[
+f(x)=a_nx^n+a_{n-1}x^{n-1}+\cdots+a_0.
+\]
+</p>
+<ul class="bullets">
+<li><span class="label">Zero polynomial:</span> all coefficients are \(0\). In these notes, its degree is taken to be \(-1\).</li>
+<li><span class="label">Degree:</span> if \(f(x)\neq 0\), then \(\deg f\) is the largest index \(n\) with \(a_n\neq 0\).</li>
+<li><span class="label">Coefficient convention:</span> terms with zero coefficient are usually omitted from the notation.</li>
+</ul>
+<p>
+For example,
+\[
+x^2-4 \in \mathbb{Z}[x]
+\]
+has degree \(2\), while in \(\mathbb{Z}_3[x]\) one may simplify coefficients modulo \(3\), so
+\[
+1+4x+6x^2 = 1+x.
+\]
+</p>
+
+<h3>Addition and multiplication</h3>
+<p>
+If
+\[
+f(x)=\sum_{i\ge 0} a_i x^i,
+\qquad
+g(x)=\sum_{i\ge 0} b_i x^i,
+\]
+then addition is coefficientwise:
+\[
+f(x)+g(x)=\sum_{i\ge 0} (a_i+b_i)x^i.
+\]
+Multiplication uses convolution of coefficients:
+\[
+f(x)g(x)=\sum_{i\ge 0}\left(\sum_{k=0}^{i} a_k b_{i-k}\right)x^i.
+\]
+</p>
+<p>
+These are exactly the rules that make symbolic multiplication behave as expected. For instance, in \(\mathbb{Z}[x]\),
+\[
+(x^2-4)(x^2+1)=x^4-3x^2-4.
+\]
+</p>
+
+<h3>Why \(R[x]\) is a ring</h3>
+<p>
+With the operations above, \(R[x]\) is a ring. More precisely:
+</p>
+<ul class="bullets">
+<li><span class="label">If \(R\) is any ring:</span> \(R[x]\) is a ring.</li>
+<li><span class="label">If \(R\) is commutative:</span> \(R[x]\) is commutative.</li>
+<li><span class="label">If \(R\) has unity \(1\):</span> the constant polynomial \(1\) is the multiplicative identity in \(R[x]\).</li>
+<li><span class="label">If \(R\) is an integral domain:</span> \(R[x]\) is an integral domain, because the product of two nonzero polynomials has nonzero leading coefficient.</li>
+</ul>
+<p>
+There is one important warning. Even when \(F\) is a field, \(F[x]\) is usually <em>not</em> a field, because nonconstant polynomials do not have polynomial inverses. For example, \(x\) is not invertible in \(F[x]\).
+</p>
+
+<h3>Polynomials are not the same thing as functions</h3>
+<p>
+Over infinite fields, different polynomials define different functions, but over finite rings or fields that can fail. The lecture example is
+\[
+f(x)=x^2+x \in \mathbb{Z}_2[x].
+\]
+Evaluating at the two elements of \(\mathbb{Z}_2\) gives
+\[
+f(0)=0,
+\qquad
+f(1)=1+1=0.
+\]
+So \(f\) evaluates to zero on every element of \(\mathbb{Z}_2\), yet \(f(x)\) is not the zero polynomial. This is the cleanest warning that a polynomial is a formal expression first and only sometimes a function second.
+</p>
+<p>
+A second coefficient-level example is that in \(\mathbb{Z}_5[x]\),
+\[
+x^2-4 = x^2+1,
+\]
+because \(-4 \equiv 1 \pmod 5\).
+</p>
+
+<h3>Evaluation homomorphisms</h3>
+<p>
+If \(R\) is a commutative ring and \(\alpha \in R\), define
+\[
+\varphi_\alpha : R[x] \to R,
+\qquad
+\varphi_\alpha(a_0+a_1x+\cdots+a_nx^n)=a_0+a_1\alpha+\cdots+a_n\alpha^n.
+\]
+This is called <span class="label">evaluation at \(\alpha\)</span>, and it is a ring homomorphism.
+</p>
+<ul class="bullets">
+<li><span class="label">Constant terms:</span> for a constant polynomial \(a_0\), we have \(\varphi_\alpha(a_0)=a_0\).</li>
+<li><span class="label">Evaluation at zero:</span> if \(f(x)=a_0+a_1x+\cdots+a_nx^n\), then \(f(0)=a_0\).</li>
+<li><span class="label">Evaluation in an extension ring:</span> if \(R \subseteq R'\) and \(\alpha \in R'\), then the same formula defines a ring homomorphism \(R[x]\to R'\).</li>
+</ul>
+<p>
+A useful example is evaluation at \(\pi\): since \(\pi\) is transcendental, the map
+\[
+\varphi_\pi : \mathbb{Q}[x] \to \mathbb{R},
+\qquad
+f(x) \mapsto f(\pi)
+\]
+has trivial kernel, so it is injective. A nonzero polynomial with rational coefficients cannot vanish at a transcendental number.
+</p>
+
+<h3>Zeros and roots</h3>
+<p>
+Let \(R \subseteq R'\) and let \(f(x) \in R[x]\). An element \(\alpha \in R'\) is a <span class="label">zero</span> or <span class="label">root</span> of \(f\) if
+\[
+f(\alpha)=0.
+\]
+For example,
+\[
+x^2-2 \in \mathbb{Q}[x]
+\]
+has no zero in \(\mathbb{Q}\), so to find its roots one must enlarge the field to one containing \(\sqrt{2}\).
+</p>
+
+<h3>Division algorithm over a field</h3>
+<p>
+If \(F\) is a field and \(f(x),g(x) \in F[x]\) with \(g(x)\neq 0\), then there exist unique polynomials \(q(x),r(x)\) such that
+\[
+f(x)=q(x)g(x)+r(x),
+\qquad
+\deg r < \deg g.
+\]
+</p>
+<p>
+This is the polynomial version of ordinary integer division. The proof works by induction on \(\deg f\), subtracting a suitable multiple of \(g\) to cancel the leading term of \(f\).
+</p>
+<div class="note">
+The requirement that the coefficient ring be a field matters here. To cancel the leading coefficient, one needs to divide by the leading coefficient of \(g\).
+</div>
+
+<h3>Consequences of the division algorithm</h3>
+<ul class="bullets">
+<li><span class="label">Factor theorem:</span> if \(a \in F\) and \(f(a)=0\), then \(x-a\) divides \(f(x)\), so
+\[
+f(x)=(x-a)q(x)
+\]
+for some \(q(x) \in F[x]\).</li>
+<li><span class="label">At most \(n\) roots:</span> a nonzero polynomial of degree \(n\) over a field has at most \(n\) zeros in that field.</li>
+</ul>
+<p>
+The second statement is proved by induction on degree: each root contributes a factor \(x-a\), which lowers the degree by one.
+</p>
+
+<h3>Further constructions and corollaries</h3>
+<ul class="bullets">
+<li><span class="label">Several indeterminates:</span> once \(R[x]\) is built, one can iterate and form \(R[x,y]\), or more generally \(R[x_1,\dots,x_k]\).</li>
+<li><span class="label">Field of rational functions:</span> if \(F\) is a field, then \(F[x]\) is an integral domain, so it has a field of quotients denoted \(F(x)\). Its elements are rational functions \(f(x)/g(x)\) with \(g(x)\neq 0\).</li>
+<li><span class="label">Finite subgroups of \(F^\times\):</span> if \(F\) is a field and \(G\) is a finite subgroup of \(F^\times\), then \(G\) is cyclic. One proof uses the fact that every element of \(G\) is a root of \(x^{|G|}-1\), and a degree-
+\(|G|\) polynomial over a field cannot have too many roots.</li>
+</ul>
 <div class="divider"></div>
 </section>
 
